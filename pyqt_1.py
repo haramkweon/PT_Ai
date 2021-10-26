@@ -60,7 +60,7 @@ class MyApp(QWidget):
 
         self.cb = QComboBox(self)
         self.cb.addItem('다이어트')
-        self.cb.addItem('자세교정')
+        self.cb.addItem('건강')
         self.cb.addItem('근력증진')
     
         #======================button====================
