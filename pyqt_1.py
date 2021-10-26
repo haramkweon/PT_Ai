@@ -164,6 +164,9 @@ class MyApp(QWidget):
             print("중급")
         elif self.rbtn3.isChecked():
             print("고급")
+        else:
+            QMessageBox.question(self, 'Message', '입력한 값을 확인해주세요',
+                                    QMessageBox.Yes)
 
         if len(name_text) > 5 or len(name_text) < 1 or int(age_text) > 150 or len(age_text) < 1 or int(tall_text) > 200 or len(tall_text) < 1 or int(weight_text) > 200 or len(weight_text) < 1:
             QMessageBox.question(self, 'Message', '입력한 값을 확인해주세요',
