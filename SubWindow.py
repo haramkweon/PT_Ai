@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import cv2
+from PyQt5.QtGui import *
 
 
 class SubWindow(QDialog):
@@ -22,10 +22,11 @@ class SubWindow(QDialog):
         layout.addWidget(label1)
         layout.addWidget(label2)
 
+        
         self.setWindowTitle('Sub Window')
-        self.setGeometry(300, 300, 300, 400)
+        self.setGeometry(700, 300, 300, 400)
         self.setLayout(layout)
 
+        
 
-    def showModal(self):   
-        return super().exec_()
+    

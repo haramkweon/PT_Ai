@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from SubWindow import SubWindow
+from qt_webcam import CamWindow
 import re
 
 class MainWindow(QMainWindow):
@@ -164,7 +165,10 @@ class MainWindow(QMainWindow):
         weight_text = self.weight.text() 
         
         text=re.compile('[가-힣]').findall(name_text)
-
+        age = text=re.compile('[0-9]').findall(age_text)
+        tall = text=re.compile('[0-9]').findall(tall_text)
+        weight = text=re.compile('[0-9]').findall(weight_text)
+        
         goal = self.cb.currentText()
         print(goal)
     
@@ -178,18 +182,18 @@ class MainWindow(QMainWindow):
             QMessageBox.question(self, 'Message', '입력한 값을 확인해주세요',
                                     QMessageBox.Yes)
 
-        if len(name_text) > 5 or len(name_text) < 1 or int(age_text) > 150 or len(age_text) < 1 or int(tall_text) > 200 or len(tall_text) < 1 or int(weight_text) > 200 or len(weight_text) < 1:
+        if len(text) == 0 or len(age)==0 or len(tall) == 0 or len(weight) == 0:
             QMessageBox.question(self, 'Message', '입력한 값을 확인해주세요',
                                     QMessageBox.Yes)
-        elif len(text) == 0:
+        elif len(name_text) > 5 or len(name_text) < 1 or int(age_text) > 150 or len(age_text) < 1 or int(tall_text) > 200 or len(tall_text) < 1 or int(weight_text) > 200 or len(weight_text) < 1:
             QMessageBox.question(self, 'Message', '입력한 값을 확인해주세요',
                                     QMessageBox.Yes)
         else:
             print(name_text, age_text, tall_text, weight_text)
-        
+    
+            self.win = SubWindow()
+            self.win.show()
 
-            win = SubWindow()
-            r = win.showModal()
+      
+           
             
-    def show(self):
-        super().show()
