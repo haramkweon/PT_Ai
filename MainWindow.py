@@ -1,87 +1,253 @@
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtGui import QPixmap, QImage
-#open cv에서는 영상을 프레임단위로 가져오기 때문에 sleep을 통해서 프레임을 연결시켜주어 영상으로 보이게 만드는 것임
-#비디오 재생을 위해 스레드 생성
-import threading
-#화면을 윈도우에 띄우기 위해 sys접근
 import sys
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from SubWindow import SubWindow
+from qt_webcam import CamWindow
+import re
 
-#open cv 라이브러리
-import cv2
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.date = QDate.currentDate()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Main Window')
+        self.setGeometry(300, 300, 300, 400)
+        layout = QVBoxLayout()
+        name_hbox = QHBoxLayout()
+        goal_hbox = QHBoxLayout()
+        age_hbox = QHBoxLayout()
+        radio_hbox = QHBoxLayout()
+        data_hbox = QHBoxLayout()
+        button_hbox = QHBoxLayout()
+        sex_hbox = QHBoxLayout()
+
+        layout.addStretch(1)
+
+        #===============================================
+        label1 = QLabel('NEXT LEVEL', self)
+        label1.setAlignment(Qt.AlignCenter)
+
+        font1 = label1.font()
+        font1.setFamily('Times New Roman')
+        font1.setPointSize(15)
+        label1.setFont(font1)
+        self.label1 = label1
+
+        layout.addStretch(1)
+        label2 = QLabel('운동목적', self)
+        label2.setAlignment(Qt.AlignCenter)
+        self.label2 = label2
+        goal = QComboBox(self)
+        goal.addItem('다이어트')
+        goal.addItem('건강')
+        goal.addItem('근력증진')
+        self.cb = goal
+
+        layout.addStretch(1)
+        label3 = QLabel('이름', self)
+        label3.setAlignment(Qt.AlignCenter)
+        self.label3 = label3
+        name = QLineEdit(self)
+        self.name = name
+
+        label4 = QLabel('나이', self)
+        label4.setAlignment(Qt.AlignCenter)
+        self.label4 = label4
+        age = QLineEdit(self)
+        self.age = age
+
+        rbtn4 = QRadioButton('남', self)
+        self.rbtn4 = rbtn4
+        rbtn5 = QRadioButton('여', self)
+        self.rbtn5 = rbtn5
+        
+
+        label5 = QLabel('키', self)
+        label5.setAlignment(Qt.AlignCenter)
+        self.label5 = label5
+        tall = QLineEdit(self)
+        self.tall = tall
+
+        label6 = QLabel('몸무게', self)
+        label6.setAlignment(Qt.AlignCenter)
+        self.label6 = label6
+
+        weight = QLineEdit(self)
+        self.weight = weight
+
+        label7 = QLabel('cm', self)
+        label7.setAlignment(Qt.AlignCenter)
+        self.label7 = label7
+
+        label8 = QLabel('kg', self)
+        label8.setAlignment(Qt.AlignCenter)
+        self.label8 = label8
+        datetime =self.date.toString(Qt.DefaultLocaleLongDate)
+        label9 = QLabel(datetime, self)
+        label9.setAlignment(Qt.AlignCenter)
+        self.label9 = label9
+        
+        rbtn1 = QRadioButton('초급', self)
+        self.rbtn1 = rbtn1
+        rbtn2 = QRadioButton('중급', self)
+        self.rbtn2 = rbtn2
+        rbtn3 = QRadioButton('고급', self)
+        self.rbtn3 = rbtn3
+
+        start_btn = QPushButton('시작', self)
+        start_btn.clicked.connect(self.onButtonClicked)
+        start_btn.setCheckable(True)
+        start_btn.toggle()
+        self.start_btn = start_btn
+
+        quit_btn = QPushButton('종료', self)
+        quit_btn.clicked.connect(QCoreApplication.instance().quit)
+        quit_btn.setCheckable(True)
+        quit_btn.toggle()
+        self.quit_btn = quit_btn
+
+        self.radiogroup1 = QButtonGroup()
+        self.radiogroup2 = QButtonGroup()
+
+        self.radiogroup1.addButton(self.rbtn1)
+        self.radiogroup1.addButton(self.rbtn2)
+        self.radiogroup1.addButton(self.rbtn3)
+
+        self.radiogroup2.addButton(self.rbtn4)
+        self.radiogroup2.addButton(self.rbtn5)
 
 
-class Ui_MainWindow(object):
-    #기본적으로 창만드는 작업
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("ForSign")
-        MainWindow.resize(500, 300) #창 사이즈
-        MainWindow.move(500,500) #창 뜰 때 위치
-        #이 아래로는 나도 잘 모름 화면을 구성하고 영상을 재생하는 위젯을 만드는거 같음 유지해두는게 나을듯
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
 
-        self.video_viewer_label = QtWidgets.QLabel(self.centralwidget)
-        self.video_viewer_label.setGeometry(QtCore.QRect(10, 10, 400, 300))
+        #===========================================
+        name_hbox.addStretch(1)
+        name_hbox.addWidget(label3)
+        name_hbox.addWidget(name)
+        name_hbox.addStretch(1)
 
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
-        self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        age_hbox.addStretch(1)
+        age_hbox.addWidget(label4)
+        age_hbox.addWidget(age)
+        age_hbox.addStretch(1)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        sex_hbox.addStretch(1)
+        sex_hbox.addWidget(rbtn4)
+        sex_hbox.addWidget(rbtn5)
+        sex_hbox.addStretch(1)
 
-    def run_cv(self, MainWindow):
-        cap = cv2.VideoCapture(0)
-        while True:
-            self.ret, self.frame = cap.read() #영상의 정보 저장
-            if self.ret:
-                self.rgbImage = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB) #프레임에 색입히기
-                self.convertToQtFormat = QImage(self.rgbImage.data, self.rgbImage.shape[1], self.rgbImage.shape[0],
-                                                QImage.Format_RGB888)
+        goal_hbox.addStretch(1)
+        goal_hbox.addWidget(label2)
+        goal_hbox.addWidget(goal)
+        goal_hbox.addStretch(1)
 
-                self.pixmap = QPixmap(self.convertToQtFormat)
-                self.p = self.pixmap.scaled(400, 300, QtCore.Qt.IgnoreAspectRatio) #프레임 크기 조정
+        data_hbox.addStretch(1)
+        data_hbox.addWidget(label5)
+        data_hbox.addWidget(tall)
+        data_hbox.addWidget(label7)
+        data_hbox.addWidget(label6)
+        data_hbox.addWidget(weight)
+        data_hbox.addWidget(label8)
+        data_hbox.addStretch(1)
 
-                self.video_viewer_label.setPixmap(self.p)
-                self.video_viewer_label.update() #프레임 띄우기
+        radio_hbox.addStretch(1)
+        radio_hbox.addWidget(rbtn1)
+        radio_hbox.addWidget(rbtn2)
+        radio_hbox.addWidget(rbtn3)
+        radio_hbox.addStretch(1)
 
-            else:
-                break
+        button_hbox.addStretch(1)
+        button_hbox.addWidget(start_btn)
+        button_hbox.addWidget(quit_btn)
+        button_hbox.addStretch(1)
+        
+        layout.addWidget(label1)
+        layout.addStretch(2)
+        layout.addLayout(name_hbox)
+        layout.addStretch(1)
+        layout.addLayout(age_hbox)
+        layout.addStretch(1)
+        layout.addLayout(sex_hbox)
+        layout.addStretch(1)
+        layout.addLayout(data_hbox)
+        layout.addStretch(1)
+        layout.addLayout(goal_hbox)
+        layout.addStretch(1)
+        layout.addLayout(radio_hbox)
+        layout.addStretch(1)
+        layout.addLayout(button_hbox)
+        layout.addStretch(1)
 
-        cap.release()
-        cv2.destroyAllWindows()
+        layout.addWidget(label9)
 
-    # 창 이름 설정
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("ForSign", "ForSign"))
 
-    # video_to_frame을 쓰레드로 사용
-    #이게 영상 재생 쓰레드 돌리는거 얘를 조작하거나 함수를 생성해서 연속재생 관리해야할듯
-    def video_thread(self, MainWindow):
-        thread = threading.Thread(target=self.run_cv, args=(self,))
-        thread.daemon = True  # 프로그램 종료시 프로세스도 함께 종료 (백그라운드 재생 X)
-        thread.start()
+        #===============================================
+        centralWidget = QWidget()
+        centralWidget.setLayout(layout)
+        self.setCentralWidget(centralWidget)
 
-#메인문
-if __name__ == "__main__":
-    import sys
+    def onButtonClicked(self):
+        name_text = self.name.text()
+        age_text = self.age.text() 
+        tall_text = self.tall.text() 
+        weight_text = self.weight.text() 
+        
+        name=re.compile('[가-힣]').findall(name_text)
+        print(name)
+        age = text=re.compile('[0-9]').findall(age_text)
+        print(age)
+        tall = text=re.compile('[0-9]').findall(tall_text)
+        print(tall)
+        weight = text=re.compile('[0-9]').findall(weight_text)
+        print(weight)
+        
+        goal = self.cb.currentText()
+        print(goal)
+    
+        easy = 0
+        normal = 0
+        hard = 0
+        if self.rbtn1.isChecked():
+            easy = 1
+        elif self.rbtn2.isChecked():
+            normal = 1
+        elif self.rbtn3.isChecked():
+            hard = 1
+        else:
+            easy = 0 
+            normal = 0
+            hard = 0
+        print(easy, normal, hard)
+        man = 0
+        woman = 0
+        if self.rbtn4.isChecked():
+            man = 1
+        elif self.rbtn5.isChecked():
+            woman = 1
+        else: 
+            man = 0
+            woman = 0
+        print(man, woman)
 
-    #화면 만들려면 기본으로 있어야 하는 코드들 건들지않기
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+        if len(name) == 0 or len(age)==0 or len(tall) == 0 or len(weight) == 0:
+            QMessageBox.question(self, 'Message', '입력한 값을 확인해주세요',
+                                    QMessageBox.Yes)
+        elif len(name_text) > 5 or len(name_text) < 1 or int(age_text) > 150 or len(age_text) < 1 or int(tall_text) > 500 or int(tall_text) < 100 or len(tall_text) < 1 or int(weight_text) > 200 or len(weight_text) < 1:
+            QMessageBox.question(self, 'Message', '입력한 값을 확인해주세요',
+                                    QMessageBox.Yes)
+        elif man + woman != 1:
+            QMessageBox.question(self, 'Message', '입력한 값을 확인해주세요',
+                                    QMessageBox.Yes) 
+        elif easy + normal + hard != 1:
+            QMessageBox.question(self, 'Message', '입력한 값을 확인해주세요',
+                                    QMessageBox.Yes)   
 
-    #영상 스레드 시작
-    ui.video_thread(MainWindow)
+        else:
+            print(name_text, age_text, tall_text, weight_text)
+    
+            self.win = SubWindow()
+            self.win.show()
 
-    #창 띄우기
-    MainWindow.show()
-
-    sys.exit(app.exec_())
+      
+           
+            
