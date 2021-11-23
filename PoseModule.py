@@ -21,6 +21,7 @@ class poseDetector():
         self.mpPose = mp.solutions.pose
         self.pose = self.mpPose.Pose(self.mode, self.upBody, self.smooth,
                                      self.detectionCon, self.trackCon)
+         
         # static_image_mode = False,
         # model_complexity = 1,
         # smooth_landmarks = True,
@@ -109,6 +110,7 @@ class poseDetector():
             cv2.putText(img, str(int(distance)), (x2 - 50, y2 + 50),
                         cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2)
         return distance
+
 
 '''
 def main():

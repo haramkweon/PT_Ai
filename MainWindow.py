@@ -2,15 +2,16 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from SubWindow import SubWindow
-from qt_webcam import CamWindow
 import re
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.date = QDate.currentDate()
+        
         self.initUI()
-
+   
+   
     def initUI(self):
         self.setWindowTitle('Main Window')
         self.setGeometry(300, 300, 300, 400)
@@ -192,17 +193,12 @@ class MainWindow(QMainWindow):
         tall_text = self.tall.text() 
         weight_text = self.weight.text() 
         
-        name=re.compile('[가-힣]').findall(name_text)
-        print(name)
-        age = text=re.compile('[0-9]').findall(age_text)
-        print(age)
-        tall = text=re.compile('[0-9]').findall(tall_text)
-        print(tall)
-        weight = text=re.compile('[0-9]').findall(weight_text)
-        print(weight)
+        name=re.compile('[가-힣][가-힣][가-힣]').findall(name_text)
+        age = re.compile('[1-9][0-9]').findall(age_text)
+        tall = re.compile('[1-2][0-9][0-9]').findall(tall_text)
+        weight =re.compile('[1-9][0-9]').findall(weight_text)
         
         goal = self.cb.currentText()
-        print(goal)
     
         easy = 0
         normal = 0
@@ -243,11 +239,8 @@ class MainWindow(QMainWindow):
                                     QMessageBox.Yes)   
 
         else:
-            print(name_text, age_text, tall_text, weight_text)
-    
+            #print("name:  ", name[0], "age:  ",age[0],"tall:  ", tall[0], "weight:  ",weight[0], "goal:  ",goal)
+            #self.win = SubWindow(name[0], age[0], tall[0], weight[0], goal, self.count_l, self.count_r)
             self.win = SubWindow()
+            #self.win.initUI()
             self.win.show()
-
-      
-           
-            

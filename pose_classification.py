@@ -33,6 +33,7 @@ Connect the Colab to hosted Python3 runtime (check top-right corner) and then in
 #from matplotlib import pyplot as plt
 from matplotlib import pyplot as plt
 
+
 def show_image(img, figsize=(10, 10)):
   """Shows output PIL image."""
   plt.figure(figsize=figsize)
@@ -1026,7 +1027,7 @@ import numpy as np
 
 def dump_for_the_app():
   pose_samples_folder = 'fitness_poses_csvs_out'
-  pose_samples_csv_path = 'fitness_poses_csvs_out.csv'
+  pose_samples_csv_path = 'data/fitness_poses_csvs_out.csv'
   file_extension = 'csv'
   file_separator = ','
 
@@ -1072,16 +1073,18 @@ import cv2
 # Do that before every video as all of them have state.
 from mediapipe.python.solutions import pose as mp_pose
 
-v_cap = cv2.VideoCapture(1)
+v_cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 
 video_n_frames = v_cap.get(cv2.CAP_PROP_FRAME_COUNT)
-video_fps = v_cap.get(cv2.CAP_PROP_FPS)
-video_width = int(v_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-video_height = int(v_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+video_fps = v_cap.set(cv2.CAP_PROP_FPS, 30)
+video_width = int(v_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280))
+video_height = int(v_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720))
+
+
 #print(video_width, video_height)
 # Folder with pose class CSVs. That should be the same folder you using while
 # building classifier to output CSVs.
-pose_samples_folder = 'fitness_poses_csvs_out'
+pose_samples_folder = 'data/fitness_poses_csvs_out'
 
 # Initialize tracker.
 pose_tracker = mp_pose.Pose(upper_body_only=False)
@@ -1122,6 +1125,7 @@ pose_classification_visualizer = PoseClassificationVisualizer(
 
 
 '''
+
 # Run classification on a video.
 import os
 import tqdm

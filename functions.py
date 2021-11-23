@@ -18,7 +18,7 @@ def counter(per, dir=0, count=0):
         if dir == 1:
             count += 0.5
             dir = 0
-    return color, count, dir
+    return color, dir,count
 
 
 def get_exercise(img, exercise='curl'):
